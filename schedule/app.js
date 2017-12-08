@@ -19,7 +19,7 @@ var schedule = require("node-schedule");
 //     console.log('05分执行任务');
 // });
 
-//一周中的某些天，某个时刻 ex:每天的14:10
+//一周中的某些天，某个时刻 ex:每周一到周日的14:10
 // var rule = new schedule.RecurrenceRule();
 // rule.dayOfWeek = [0,new schedule.Range(0,6)];
 // rule.hour = 14;
