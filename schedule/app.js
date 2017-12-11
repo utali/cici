@@ -26,7 +26,7 @@ var schedule = require("node-schedule");
 // rule.minute = 10;
 //
 // var task = schedule.scheduleJob(rule, function () {
-//     console.log('每天10分执行任务');
+//     console.log('每天14:10分执行任务');
 // });
 
 //每隔10秒执行
