@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue</title>
+    <script src="https://cdn.bootcss.com/vue/2.2.2/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <input type="text" placeholder="请输入" v-model="message">
+    <br>
+    <p>数据：{{message}}</p>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            message: '123'
+        }
+    })
+</script>
+</body>
+</html>

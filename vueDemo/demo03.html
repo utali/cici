@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue</title>
+    <script src="https://cdn.bootcss.com/vue/2.2.2/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <p><a @click="test">{{message}}</a></p>
+</div>
+
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello'
+        },
+        methods: {
+            test (){
+                alert(1)
+            }
+        },
+        components: {
+
+        }
+    });
+    console.log(vm.$data);
+</script>
+</body>
+</html>
