@@ -4,6 +4,7 @@
   "description": "startNode",
   "main": "schedule.js",
   "dependencies": {
+    "@antv/g2": "^3.0.5",
     "express": "^4.16.2",
     "jade": "^1.11.0",
     "mysql": "^2.15.0"
