@@ -73,10 +73,10 @@
 <script type="text/javascript">
     $(document).ready(function() {
         //随机生成拼图块
-        function strockArc(ctx,n){//圆心(x,y)，半径radius
+        function strockArc(ctx,mX,n){//圆心(x,y)，半径radius
             var number = Math.floor(Math.random()*9)%9;
             if ( n>=0 ) number = n;
-            console.log(number,ctx);
+            console.log(number);
             switch (number) {
                 case 0:
                     //上凸下凹
@@ -105,7 +105,7 @@
                     ctx.lineTo(mX+s,cY+s);
                     ctx.lineTo(mX,cY+s);
                     ctx.lineTo(mX,cY+s/2+r);
-                    ctx.arc(mX+s/2,cY+s,25,0.5*Math.PI,1.5*Math.PI,true);
+                    ctx.arc(mX,cY+s/2,25,0.5*Math.PI,1.5*Math.PI,true);
                     return number;
                     break;
                 case 3 :
@@ -128,17 +128,17 @@
                     ctx.lineTo(mX,cY+s);
                     return number;
                     break;
+//                case 5 :
+//                    //上凸左凸
+//                    ctx.arc(mX+s/2,cY,25,Math.PI,2*Math.PI);
+//                    ctx.lineTo(mX+s,cY);
+//                    ctx.lineTo(mX+s,cY+s);
+//                    ctx.lineTo(mX,cY+s);
+//                    ctx.lineTo(mX,cY+s/2+r);
+//                    ctx.arc(mX,cY+s/2,25,0.5*Math.PI,1.5*Math.PI);
+//                    return number;
+//                    break;
                 case 5 :
-                    //上凸左凸
-                    ctx.arc(mX+s/2,cY,25,Math.PI,2*Math.PI);
-                    ctx.lineTo(mX+s,cY);
-                    ctx.lineTo(mX+s,cY+s);
-                    ctx.lineTo(mX,cY+s);
-                    ctx.lineTo(mX,cY+s/2+r);
-                    ctx.arc(mX+s/2,cY+s,25,0.5*Math.PI,1.5*Math.PI);
-                    return number;
-                    break;
-                case 6 :
                     //上凸右凸下凹
                     ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
                     ctx.lineTo(mX+s,cY);
@@ -147,9 +147,10 @@
                     ctx.lineTo(mX+s,cY+s);
                     ctx.lineTo(mX+s/2+r,cY+s);
                     ctx.arc(mX+s/2,cY+s,r,2*Math.PI,Math.PI,true);
+                    ctx.lineTo(mX,cY+s);
                     return number;
                     break;
-                case 7 :
+                case 6 :
                     //上凸右凸左凹
                     ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
                     ctx.lineTo(mX+s,cY);
@@ -158,23 +159,22 @@
                     ctx.lineTo(mX+s,cY+s);
                     ctx.lineTo(mX,cY+s);
                     ctx.lineTo(mX,cY+s/2+r);
-                    ctx.arc(mX+s/2,cY+s,25,0.5*Math.PI,1.5*Math.PI,true);
+                    ctx.arc(mX,cY+s/2,25,0.5*Math.PI,1.5*Math.PI,true);
                     return number;
                     break;
-                case 8 :
+                case 7 :
                     //上凸下凸右凹
                     ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
                     ctx.lineTo(mX+s,cY);
                     ctx.lineTo(mX+s,cY+s/2-r);
                     ctx.arc(mX+s,cY+s/2,r,1.5*Math.PI,0.5*Math.PI,true);
                     ctx.lineTo(mX+s,cY+s);
-                    ctx.lineTo(mX,cY+s);
                     ctx.lineTo(mX+s/2+r,cY+s);
                     ctx.arc(mX+s/2,cY+s,r,0,Math.PI);
                     ctx.lineTo(mX,cY+s);
                     return number;
                     break;
-                case 9 :
+                case 8 :
                     //上凸下凸左凹
                     ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
                     ctx.lineTo(mX+s,cY);
@@ -183,7 +183,7 @@
                     ctx.lineTo(mX+s,cY+s);
                     ctx.lineTo(mX,cY+s);
                     ctx.lineTo(mX,cY+s/2+r);
-                    ctx.arc(mX+s/2,cY+s,25,0.5*Math.PI,1.5*Math.PI,true);
+                    ctx.arc(mX,cY+s/2,25,0.5*Math.PI,1.5*Math.PI,true);
                     return number;
                     break;
             }
@@ -239,17 +239,12 @@
             ctx_img.beginPath();
             ctx_img.moveTo(cX, cY);
             ctx_img.lineTo(cX+s/2-r,cY);
-//            n = strockArc(ctx_img);
-            ctx_img.arc(cX+s/2,cY,r,Math.PI,2*Math.PI);
-            ctx_img.lineTo(cX+s,cY);
-            ctx_img.lineTo(cX+s,cY+s);
-            ctx_img.lineTo(cX+s/2+r,cY+s);
-            ctx_img.arc(cX+s/2,cY+s,r,2*Math.PI,Math.PI,true);
-            ctx_img.lineTo(cX,cY+s);
+            if (!n) n = strockArc(ctx_img, cX);
+            else strockArc(ctx_img, cX,n);
             ctx_img.closePath();
             ctx_img.stroke();
             ctx_img.clip();
-            imgData = ctx_img.getImageData(cX,cY-r,s,s+r);
+            imgData = ctx_img.getImageData(cX,cY-r,s+r,s+2*r);
             ctx_img.fillStyle = 'rgba(211,0,0,0.3)';
             ctx_img.fillRect(0,0,800,500);
 
@@ -270,13 +265,7 @@
             ctx_ceng.beginPath();
             ctx_ceng.moveTo(0, cY);
             ctx_ceng.lineTo(s/2-r,cY);
-//            strockArc(ctx_ceng,n);
-            ctx_ceng.arc(s/2,cY,r,Math.PI,2*Math.PI);
-            ctx_ceng.lineTo(s,cY);
-            ctx_ceng.lineTo(s,cY+s);
-            ctx_ceng.lineTo(s/2+r,cY+s);
-            ctx_ceng.arc(s/2,cY+s,r,2*Math.PI,Math.PI,true);
-            ctx_ceng.lineTo(0,cY+s);
+            strockArc(ctx_ceng,mX,n);
             ctx_ceng.closePath();
             ctx_ceng.fillStyle = 'green';
             ctx_ceng.fill();
@@ -310,13 +299,7 @@
                 ctx_ceng.beginPath();
                 ctx_ceng.moveTo(mX, cY);
                 ctx_ceng.lineTo(mX+s/2-r,cY);
-//                strockArc(ctx_ceng,n);
-                ctx_ceng.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
-                ctx_ceng.lineTo(mX+s,cY);
-                ctx_ceng.lineTo(mX+s,cY+s);
-                ctx_ceng.lineTo(mX+s/2+r,cY+s);
-                ctx_ceng.arc(mX+s/2,cY+s,r,2*Math.PI,Math.PI,true);
-                ctx_ceng.lineTo(mX,cY+s);
+                strockArc(ctx_ceng,mX,n);
                 ctx_ceng.closePath();
                 ctx_ceng.fillStyle = 'green';
                 ctx_ceng.fill();
@@ -350,13 +333,7 @@
                 ctx_ceng.beginPath();
                 ctx_ceng.moveTo(mX, cY);
                 ctx_ceng.lineTo(mX+s/2-r,cY);
-//                strockArc(ctx_ceng,n);
-                ctx_ceng.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
-                ctx_ceng.lineTo(mX+s,cY);
-                ctx_ceng.lineTo(mX+s,cY+s);
-                ctx_ceng.lineTo(mX+s,cY+s);
-                ctx_ceng.arc(mX+s/2,cY+s,r,2*Math.PI,Math.PI,true);
-                ctx_ceng.lineTo(mX,cY+s);
+                strockArc(ctx_ceng,mX,n);
                 ctx_ceng.closePath();
                 ctx_ceng.fillStyle = 'green';
                 ctx_ceng.fill();
