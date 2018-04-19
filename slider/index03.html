@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <style>
+        .yan {
+            width: 800px;
+            height: 500px;
+            margin: 40px auto 0;
+        }
+        #yan_img {
+            display: none;
+        }
+        .yan_drag {
+            margin-top: 30px;
+            border-radius: 4px;
+            height: 50px;
+            width: 800px;
+            box-sizing: border-box;
+            line-height: 50px;
+            text-align: center;
+            background-color: #dddddd;
+            position: relative;
+        }
+        .yan_drag_btn {
+            width: 150px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+        }
+        .yan_ceng {
+            display: none;
+            position: relative;
+        }
+        #yan_ceng {
+            position: absolute;
+            top:0;
+            left: 0;
+        }
+        .exm {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+        }
+        .moved {
+            position: absolute;
+            height: 100%;
+            background-color: #7ac23c;
+            border-radius: 4px;
+            width: 0;
+            color: #ffffff;
+        }
+    </style>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="yan">
+    <img src="img/286_1661(1).jpg" id="yan_img">
+    <div class="yan_ceng">
+        <div class="exm"></div>
+        <canvas id="yan_ceng" width="800" height="500"></canvas>
+        <canvas id="yan_img2" width="800" height="500"></canvas>
+    </div>
+    <canvas id="yanCanvas" width="800" height="500"></canvas>
+    <div class="yan_drag">
+        <div class="moved"></div>
+        <button class="yan_drag_btn">|||</button>
+        <div class="yan_drag_text">拖动滑块进行验证</div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        //随机生成拼图块
+        function strockArc(ctx,n){//圆心(x,y)，半径radius
+            var number = Math.floor(Math.random()*9)%9;
+            if ( n>=0 ) number = n;
+            console.log(number,ctx);
+            switch (number) {
+                case 0:
+                    //上凸下凹
+                    ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
+                    ctx.lineTo(mX+s,cY);
+                    ctx.lineTo(mX+s,cY+s);
+                    ctx.lineTo(mX+s/2+r,cY+s);
+                    ctx.arc(mX+s/2,cY+s,r,2*Math.PI,Math.PI,true);
+                    ctx.lineTo(mX,cY+s);
+                    return number;
+                    break;
+                case 1:
+                    //上凸右凹
+                    ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
+                    ctx.lineTo(mX+s,cY);
+                    ctx.lineTo(mX+s,cY+s/2-r);
+                    ctx.arc(mX+s,cY+s/2,r,1.5*Math.PI,0.5*Math.PI,true);
+                    ctx.lineTo(mX+s,cY+s);
+                    ctx.lineTo(mX,cY+s);
+                    return number;
+                    break;
+                case 2 :
+                    //上凸左凹
+                    ctx.arc(mX+s/2,cY,25,Math.PI,2*Math.PI);
+                    ctx.lineTo(mX+s,cY);
+                    ctx.lineTo(mX+s,cY+s);
+                    ctx.lineTo(mX,cY+s);
+                    ctx.lineTo(mX,cY+s/2+r);
+                    ctx.arc(mX+s/2,cY+s,25,0.5*Math.PI,1.5*Math.PI,true);
+                    return number;
+                    break;
+                case 3 :
+                    //上凸下凸
+                    ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
+                    ctx.lineTo(mX+s,cY);
+                    ctx.lineTo(mX+s,cY+s);
+                    ctx.lineTo(mX+s/2+r,cY+s);
+                    ctx.arc(mX+s/2,cY+s,r,0,Math.PI);
+                    ctx.lineTo(mX,cY+s);
+                    return number;
+                    break;
+                case 4 :
+                    //上凸右凸
+                    ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
+                    ctx.lineTo(mX+s,cY);
+                    ctx.lineTo(mX+s,cY+s/2-r);
+                    ctx.arc(mX+s,cY+s/2,r,1.5*Math.PI,0.5*Math.PI);
+                    ctx.lineTo(mX+s,cY+s);
+                    ctx.lineTo(mX,cY+s);
+                    return number;
+                    break;
+                case 5 :
+                    //上凸左凸
+                    ctx.arc(mX+s/2,cY,25,Math.PI,2*Math.PI);
+                    ctx.lineTo(mX+s,cY);
+                    ctx.lineTo(mX+s,cY+s);
+                    ctx.lineTo(mX,cY+s);
+                    ctx.lineTo(mX,cY+s/2+r);
+                    ctx.arc(mX+s/2,cY+s,25,0.5*Math.PI,1.5*Math.PI);
+                    return number;
+                    break;
+                case 6 :
+                    //上凸右凸下凹
+                    ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
+                    ctx.lineTo(mX+s,cY);
+                    ctx.lineTo(mX+s,cY+s/2-r);
+                    ctx.arc(mX+s,cY+s/2,r,1.5*Math.PI,0.5*Math.PI);
+                    ctx.lineTo(mX+s,cY+s);
+                    ctx.lineTo(mX+s/2+r,cY+s);
+                    ctx.arc(mX+s/2,cY+s,r,2*Math.PI,Math.PI,true);
+                    return number;
+                    break;
+                case 7 :
+                    //上凸右凸左凹
+                    ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
+                    ctx.lineTo(mX+s,cY);
+                    ctx.lineTo(mX+s,cY+s/2-r);
+                    ctx.arc(mX+s,cY+s/2,r,1.5*Math.PI,0.5*Math.PI);
+                    ctx.lineTo(mX+s,cY+s);
+                    ctx.lineTo(mX,cY+s);
+                    ctx.lineTo(mX,cY+s/2+r);
+                    ctx.arc(mX+s/2,cY+s,25,0.5*Math.PI,1.5*Math.PI,true);
+                    return number;
+                    break;
+                case 8 :
+                    //上凸下凸右凹
+                    ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
+                    ctx.lineTo(mX+s,cY);
+                    ctx.lineTo(mX+s,cY+s/2-r);
+                    ctx.arc(mX+s,cY+s/2,r,1.5*Math.PI,0.5*Math.PI,true);
+                    ctx.lineTo(mX+s,cY+s);
+                    ctx.lineTo(mX,cY+s);
+                    ctx.lineTo(mX+s/2+r,cY+s);
+                    ctx.arc(mX+s/2,cY+s,r,0,Math.PI);
+                    ctx.lineTo(mX,cY+s);
+                    return number;
+                    break;
+                case 9 :
+                    //上凸下凸左凹
+                    ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
+                    ctx.lineTo(mX+s,cY);
+                    ctx.lineTo(mX+s,cY+s/2-r);
+                    ctx.arc(mX+s,cY+s/2,r,1.5*Math.PI,0.5*Math.PI,true);
+                    ctx.lineTo(mX+s,cY+s);
+                    ctx.lineTo(mX,cY+s);
+                    ctx.lineTo(mX,cY+s/2+r);
+                    ctx.arc(mX+s/2,cY+s,25,0.5*Math.PI,1.5*Math.PI,true);
+                    return number;
+                    break;
+            }
+        }
+
+        //拼图随机生成位置
+        var r = 25,s=150;
+        var n;
+        var cX, cY;
+        var rX = Math.random()*250 + 250;
+        var rY = Math.random()*310 + 20;
+        var imgData;
+        var isMatch = false;
+        var canvas = document.getElementById('yanCanvas');
+        var ctx = canvas.getContext('2d');
+
+        var img = document.getElementById('yan_img');
+        ctx.drawImage(img, 0, 0, 800, 500);
+
+        var canvas_img = document.getElementById('yan_img2');
+        var ctx_img = canvas_img.getContext('2d');
+
+        var canvas_ceng = document.getElementById('yan_ceng');
+        var ctx_ceng = canvas_ceng.getContext('2d');
+
+        var mX = 0;//移动距离
+        var dX = 0, dX1 = 0; //滑动区域
+        var isDrag = false;
+        //按钮点击事件
+        var btn = $('.yan_drag_btn');
+        var mover = $('.yan_drag');
+        btn.on('mousedown', function (e) {
+            if (isMatch) return;
+            ctx_img.clearRect(0,0,800,500);
+            ctx_ceng.clearRect(0,0,800,500);
+            ctx_img.drawImage(img, 0, 0, 800, 500);
+
+            $('.exm').css({'top': rY, 'left': rX});
+            cX = parseInt($('.exm').css('left'));
+            cY = parseInt($('.exm').css('top'));
+
+            dX = e.pageX;
+            dX1 = e.pageX + 650;
+            btn.html('<->');
+            isDrag = true;
+            $('#yanCanvas').css('display', 'none');
+            $('.yan_ceng').css('display', 'block');
+
+            ctx_img.save();
+            ctx_img.lineWidth = 2;
+            ctx_img.strokeStyle = '#ffffff';
+
+            ctx_img.beginPath();
+            ctx_img.moveTo(cX, cY);
+            ctx_img.lineTo(cX+s/2-r,cY);
+//            n = strockArc(ctx_img);
+            ctx_img.arc(cX+s/2,cY,r,Math.PI,2*Math.PI);
+            ctx_img.lineTo(cX+s,cY);
+            ctx_img.lineTo(cX+s,cY+s);
+            ctx_img.lineTo(cX+s/2+r,cY+s);
+            ctx_img.arc(cX+s/2,cY+s,r,2*Math.PI,Math.PI,true);
+            ctx_img.lineTo(cX,cY+s);
+            ctx_img.closePath();
+            ctx_img.stroke();
+            ctx_img.clip();
+            imgData = ctx_img.getImageData(cX,cY-r,s,s+r);
+            ctx_img.fillStyle = 'rgba(211,0,0,0.3)';
+            ctx_img.fillRect(0,0,800,500);
+
+
+            ctx_img.restore();
+            ctx_img.fillStyle = 'rgba(255,255,255,0.1)';
+            ctx_img.fillRect(0,0,800,500);
+
+            ctx_ceng.lineWidth = 2;
+            ctx_ceng.strokeStyle = '#ffffff';
+
+
+
+            ctx_ceng.putImageData(imgData, 0,cY-r);
+            ctx_ceng.globalCompositeOperation="destination-in";
+
+            ctx_ceng.save();
+            ctx_ceng.beginPath();
+            ctx_ceng.moveTo(0, cY);
+            ctx_ceng.lineTo(s/2-r,cY);
+//            strockArc(ctx_ceng,n);
+            ctx_ceng.arc(s/2,cY,r,Math.PI,2*Math.PI);
+            ctx_ceng.lineTo(s,cY);
+            ctx_ceng.lineTo(s,cY+s);
+            ctx_ceng.lineTo(s/2+r,cY+s);
+            ctx_ceng.arc(s/2,cY+s,r,2*Math.PI,Math.PI,true);
+            ctx_ceng.lineTo(0,cY+s);
+            ctx_ceng.closePath();
+            ctx_ceng.fillStyle = 'green';
+            ctx_ceng.fill();
+            ctx_ceng.clip();
+            ctx_ceng.restore();
+
+
+        });
+
+        //鼠标移动事件
+        mover.on('mousemove', function (e) {
+            if (isDrag) {
+                var x = e.pageX;
+                if (x >= dX && x <= dX1) {
+                    mX = e.pageX - dX;
+                }
+                if (x>=dX1) {
+                    isDrag = false;
+                    mX = 0;
+                }
+                btn.css('left', mX);
+                $('.moved').css('width', mX);
+                ctx_ceng.clearRect(0,0,800,500);
+                ctx_ceng.lineWidth = 2;
+                ctx_ceng.strokeStyle = '#ffffff';
+
+                ctx_ceng.putImageData(imgData, mX,cY-r);
+                ctx_ceng.globalCompositeOperation="destination-in";
+
+                ctx_ceng.save();
+                ctx_ceng.beginPath();
+                ctx_ceng.moveTo(mX, cY);
+                ctx_ceng.lineTo(mX+s/2-r,cY);
+//                strockArc(ctx_ceng,n);
+                ctx_ceng.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
+                ctx_ceng.lineTo(mX+s,cY);
+                ctx_ceng.lineTo(mX+s,cY+s);
+                ctx_ceng.lineTo(mX+s/2+r,cY+s);
+                ctx_ceng.arc(mX+s/2,cY+s,r,2*Math.PI,Math.PI,true);
+                ctx_ceng.lineTo(mX,cY+s);
+                ctx_ceng.closePath();
+                ctx_ceng.fillStyle = 'green';
+                ctx_ceng.fill();
+                ctx_ceng.clip();
+
+                ctx_ceng.restore();
+            }
+        });
+
+        $(document).on('mouseup', function (e) {
+            isDrag = false;
+            btn.html('|||');
+            console.log(mX);
+            console.log(cX);
+            if (mX <= cX+3 && mX >= cX-3){
+                isMatch = true;
+                $('.moved').html('验证通过');
+                $('.yan_drag_text').html('');
+            } else {
+                mX = 0;
+                btn.css('left',0);
+                $('.moved').css('width',0);
+                ctx_ceng.clearRect(0,0,800,500);
+                ctx_ceng.lineWidth = 2;
+                ctx_ceng.strokeStyle = '#ffffff';
+
+                ctx_ceng.putImageData(imgData, mX,cY-r);
+                ctx_ceng.globalCompositeOperation="destination-in";
+
+                ctx_ceng.save();
+                ctx_ceng.beginPath();
+                ctx_ceng.moveTo(mX, cY);
+                ctx_ceng.lineTo(mX+s/2-r,cY);
+//                strockArc(ctx_ceng,n);
+                ctx_ceng.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
+                ctx_ceng.lineTo(mX+s,cY);
+                ctx_ceng.lineTo(mX+s,cY+s);
+                ctx_ceng.lineTo(mX+s,cY+s);
+                ctx_ceng.arc(mX+s/2,cY+s,r,2*Math.PI,Math.PI,true);
+                ctx_ceng.lineTo(mX,cY+s);
+                ctx_ceng.closePath();
+                ctx_ceng.fillStyle = 'green';
+                ctx_ceng.fill();
+                ctx_ceng.clip();
+
+                ctx_ceng.restore();
+            }
+        })
+    });
+</script>
+</body>
+</html>

@@ -103,7 +103,7 @@
             isDrag = true;
             startX = e.clientX - e.offsetX;
         });
-        mover.on('mouseup', function (e) {
+        $(document).on('mouseup', function (e) {
             isDrag = false;
             setTimeout(function () {
                 if (isMatch) {
