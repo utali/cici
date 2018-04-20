@@ -57,7 +57,7 @@
 </head>
 <body>
 <div class="yan">
-    <img src="img/286_1661(1).jpg" id="yan_img">
+    <img src="img/bc01.jpg" id="yan_img">
     <div class="yan_ceng">
         <div class="exm"></div>
         <canvas id="yan_ceng" width="800" height="500"></canvas>
@@ -175,7 +175,7 @@
                     return number;
                     break;
                 case 8 :
-                    //上凸下凸左凹
+                    //上凸左凹右凹
                     ctx.arc(mX+s/2,cY,r,Math.PI,2*Math.PI);
                     ctx.lineTo(mX+s,cY);
                     ctx.lineTo(mX+s,cY+s/2-r);
@@ -245,12 +245,12 @@
             ctx_img.stroke();
             ctx_img.clip();
             imgData = ctx_img.getImageData(cX,cY-r,s+r,s+2*r);
-            ctx_img.fillStyle = 'rgba(211,0,0,0.3)';
+            ctx_img.fillStyle = 'rgba(255,255,255,0.5)';
             ctx_img.fillRect(0,0,800,500);
 
 
             ctx_img.restore();
-            ctx_img.fillStyle = 'rgba(255,255,255,0.1)';
+            ctx_img.fillStyle = 'rgba(255,255,255,0)';
             ctx_img.fillRect(0,0,800,500);
 
             ctx_ceng.lineWidth = 2;
