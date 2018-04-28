@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>file_upload</title>
+    <style>
+        #show {
+            border : 2px solid #dddddd;
+            background-color: #dddddd;
+            border-radius: 4px;
+            width: 800px;
+            height: 500px;
+        }
+        #take-picture {
+
+        }
+    </style>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="show">
+        <input type="file" id="take-picture" accept="image/*" multiple />
+        <div id="show-picture">
+
+        </div>
+    </div>
+    <script>
+        var takePicture = document.getElementById('take-picture');
+        var showPicture = document.querySelector('#show-picture');
+        takePicture.onchange = function (e) {
+            //获取到图片文件的引用
+            var  files = e.target.files, file;
+            if (files && files.length > 0) {
+                console.log(files);
+                file = files[0];
+
+                try {
+                    //获取到window.URL对象
+                    var URL = window.URL || window.webkitURL;
+
+                    //创建一个对象URL字符串
+                    var imgURL = URL.createObjectURL(file);
+                    var img = document.createElement('img');
+                    img.src = imgURL;
+                    showPicture.appendChild(img);
+
+                    //释放那个对象URL，提高性能
+//                    URL.revokeObjectURL(imgURL);
+                }
+                catch (e) {
+                    try {
+                        // 如果createObjectURL方法不可用
+                        var fileReader = new FileReader();
+                        fileReader.onload = function (event) {
+                            var img = document.createElement('img');
+                            img.src = event.target.result;
+                            showPicture.appendChild(img);
+                        };
+                        fileReader.readAsDataURL(file);
+                    }
+                    catch (e) {
+                        //
+                        var error = document.querySelector("#error");
+                        if (error) {
+                            error.innerHTML = "Neither createObjectURL or FileReader are supported";
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
